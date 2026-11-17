@@ -1,0 +1,183 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated player profile and lifetime career statistics for Horário de Pico: Briga no Busão.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the player."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Player display nickname."
+        },
+        "bestScore": {
+          "type": "integer",
+          "description": "Highest arcade score achieved by the player."
+        },
+        "highestLine": {
+          "type": "integer",
+          "description": "Highest bus line reached (1 to 3)."
+        },
+        "totalEnemiesDefeated": {
+          "type": "integer",
+          "description": "Cumulative count of enemies defeated across runs."
+        },
+        "gamesPlayed": {
+          "type": "integer",
+          "description": "Total completed or ended runs."
+        },
+        "badges": {
+          "type": "array",
+          "description": "Bounded allowlisted achievement medal IDs unlocked by the player (max 6)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last update timestamp."
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "bestScore",
+        "highestLine",
+        "totalEnemiesDefeated",
+        "gamesPlayed",
+        "badges",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public high-score entry for the bus commuter leaderboard.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "playerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Public player display name."
+        },
+        "bestScore": {
+          "type": "integer",
+          "description": "Best run score."
+        },
+        "highestLine": {
+          "type": "integer",
+          "description": "Highest bus line reached (1 to 3)."
+        },
+        "enemiesDefeated": {
+          "type": "integer",
+          "description": "Enemies defeated in best run."
+        },
+        "badges": {
+          "type": "array",
+          "description": "Bounded allowlisted achievement medal IDs displayed on the leaderboard (max 6)."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the record."
+        }
+      },
+      "required": [
+        "uid",
+        "playerName",
+        "bestScore",
+        "highestLine",
+        "enemiesDefeated",
+        "badges",
+        "updatedAt"
+      ]
+    },
+    "GameRun": {
+      "title": "GameRun",
+      "description": "Individual match history record for a player.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner Firebase Auth UID."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Final score of this run."
+        },
+        "lineReached": {
+          "type": "integer",
+          "description": "Bus line reached (1 to 3)."
+        },
+        "enemiesDefeated": {
+          "type": "integer",
+          "description": "Number of enemies defeated during this run."
+        },
+        "victory": {
+          "type": "boolean",
+          "description": "Whether the player beat the final boss and clocked in."
+        },
+        "badges": {
+          "type": "array",
+          "description": "Bounded allowlisted achievement medal IDs earned in this run (max 6)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the run was recorded."
+        }
+      },
+      "required": [
+        "uid",
+        "score",
+        "lineReached",
+        "enemiesDefeated",
+        "victory",
+        "badges",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Private per-user profile and aggregate gameplay statistics."
+    },
+    "/users/{userId}/runs/{runId}": {
+      "schema": {
+        "$ref": "#/entities/GameRun"
+      },
+      "description": "Immutable match history records owned by the user."
+    },
+    "/leaderboard/{userId}": {
+      "schema": {
+        "$ref": "#/entities/LeaderboardEntry"
+      },
+      "description": "Publicly readable high-score leaderboard entries keyed by user UID."
+    }
+  }
+}
